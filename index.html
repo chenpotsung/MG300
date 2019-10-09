@@ -1,0 +1,83 @@
+<body>
+  <h1>Firebase Realtime Database</h1>
+  <h3>建立使用者帳號</h3>
+  <input type="text" id = "create_id "   placeholder="ID"/>
+  <input type="text" id = "create_email" placeholder="Email"/>
+  <input type="text" id = "create_name"  placeholder="名稱"/>
+  <button id = "create_user"> 按我建立 </button><br><br>
+  <label id ="data"></label>
+</body>
+
+
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<meta  charset="UTF-8">
+<title>Firebase Realtime Database</title>
+<script src="https://www.gstatic.com/firebasejs/5.7.1/firebase.js"></script>
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<!-- <script src="https://www.gstatic.com/firebasejs/7.0.0/firebase-analytics.js"></script> -->
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyCjiwFG1RvyJye0GcfGjOdFWCYB3m8kw9c",
+    authDomain: "jimmy-15295.firebaseapp.com",
+    databaseURL: "https://jimmy-15295.firebaseio.com",
+    projectId: "jimmy-15295",
+    storageBucket: "jimmy-15295.appspot.com",
+    messagingSenderId: "320167293376",
+    appId: "1:320167293376:web:9676d7afda6814bc73d825",
+    measurementId: "G-XVBBR2HYGE"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  var db = firebase.database();
+</script>
+
+<script>
+  
+
+
+function writeUserData(userId, name, email){
+
+//這個例子是會創一個USERS的collection
+    db.ref('/users/' + userId).set({
+      username : name,
+      email : email,
+    })
+    .then(function() {alert("建立成功");})
+    .catch(function() {alert("伺服器發生錯誤，請稍後再試");});
+}
+
+
+$(document).ready(function(){
+   /*建立使用者*/
+   $("#create_user").click(function(){
+    var id    = $('#create_id').val();
+    var email = $('#create_email').val();
+    var name  = $('#create_name').val();
+    writeUserData(id,name,email);
+   });
+
+   function display_users(data_val){
+    keys = Object.keys(data_val);
+    users = '';
+    //alert(data_val[key[0]]['username']);
+    for (var i = keys.length - 1; i >= 0; i--){
+      users += data_val[keys[i]]['username']+','+data_val[keys[i]]['email']+'<br>';
+    }
+    $('#data').html(users);
+   }
+
+  db.ref('/users/').on('value',function(snapshot){
+    //alert(Object.keys(snapshot.val()))
+    display_users(snapshot.val());
+  });
+
+
+});
+
+</script>
